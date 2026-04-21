@@ -2,6 +2,7 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Header from "../header/Header";
 import CardPizza from "../card/CardPizza";
+import { pizzas } from "../../pizzas";
 
 function Home() {
   return (
@@ -11,19 +12,24 @@ function Home() {
         class="card-container"
         className="row justify-content-center mt-4 px-4"
       >
-        <div className="col-12 col-md-4 d-flex justify-content-center">
-          <CardPizza
-            className="mx-2 mb-4 h-100"
-            image="https://firebasestorage.googleapis.com/v0/b/apis-varias-mias.appspot.com/o/pizzeria%2Fpizza-1239077_640_cl.jpg?alt=media&token=6a9a33da-5c00-49d4-9080-784dcc87ec2c"
-            title="Pizza Napolitana"
-            ingredientes={["mozzarella", "tomates", "jamón", "orégano"]}
-            price={5950}
-            colorButton="outline-dark"
-            textButton="ver más 👀"
-            colorButton2="dark"
-            textButton2="Añadir 🛒"
-          />
+        <div className="row">
+          {pizzas.map((pizza) => (
+            <div
+              className="col-12 col-md-4 mb-4 d-flex justify-content-center"
+              key={pizza.id}
+            >
+              <CardPizza
+                className="mx-2 mb-4 h-100"
+                nombre={pizza.name}
+                precio={pizza.price}
+                descripcion={pizza.desc}
+                ingredientes={pizza.ingredients}
+                img={pizza.img}
+              />
+            </div>
+          ))}
         </div>
+        {/*}
         <div className="col-12 col-md-4 d-flex justify-content-center">
           <CardPizza
             className="mx-2 mb-4 h-100"
@@ -55,6 +61,7 @@ function Home() {
             textButton2="Añadir 🛒"
           />
         </div>
+        */}
       </div>
     </div>
   );

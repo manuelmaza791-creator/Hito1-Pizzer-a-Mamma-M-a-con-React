@@ -2,42 +2,59 @@ import Card from "react-bootstrap/Card";
 import BotonCard from "../botonCard/BotonCard";
 
 const CardPizza = ({
-  image,
-  title,
+  img,
+  nombre,
+  descripcion,
   ingredientes,
-  price,
+  precio,
   colorButton,
   textButton,
   colorButton2,
   textButton2,
 }) => {
   return (
-    <>
-      <Card className="mx-2 mb-4">
-        <Card.Img variant="top" src={image} />
+    <div className="card shadow-sm h-100">
+      {/* 2. Reemplazamos la URL estática por la variable img */}
+      <img
+        // variant="top"
+        src={img}
+        className="card-img-top"
+        alt={`Pizza ${nombre}`}
+        style={{ height: "280px", objectFit: "cover" }}
+      />
 
-        <Card.Body>
-          <>
-            <Card.Title className="fw-bold pb-2 border-bottom">
-              {title}
-            </Card.Title>
-            <div className="text-center py-2 border-bottom">
-              <p className="text-muted mb-1 fw-bold"> Ingredientes:</p>
-              <p className="fs-6 mb-0">🍕 {ingredientes.join(", ")}</p>
-            </div>
-            <Card.Text className="text-center py-3 mb-2">
-              Precio: ${price.toLocaleString()}
-            </Card.Text>
-            <BotonCard
-              colorButton={colorButton}
-              textButton={textButton}
-              colorButton2={colorButton2}
-              textButton2={textButton2}
-            />
-          </>
-        </Card.Body>
-      </Card>
-    </>
+      <div className="card-body d-flex flex-column flex-grow-1">
+        {/* 3. Reemplazamos el título estático por la variable nombre */}
+        <h5 className="card-title text-capitalize fw-bold pb-2 border-bottom">
+          {nombre}
+        </h5>
+        {/* 4. Mostramos la descripción */}
+        <p
+          className="card-text text-muted text-center"
+          style={{ fontSize: "0.9rem" }}
+        >
+          {descripcion}
+        </p>
+        <p className="card-text text-center">Ingredientes:</p>
+        <ul className="text-center list-unstyled">
+          {ingredientes.map((ingredientes, index) => (
+            <li key={index}>🍕 {ingredientes}</li>
+          ))}
+        </ul>
+
+        <hr />
+        <p className="h4 text-center fw-bold py-3 mb-2">
+          Precio: ${precio}
+          {/* Precio: ${price.toLocaleString()*/}
+        </p>
+
+        <hr />
+        <div className="d-flex justify-content-between mt-auto px-5 mb-1">
+          <BotonCard colorButton="outline-dark" textButton="ver más 👀" />
+          <BotonCard colorButton="dark" textButton="Añadir 🛒" />
+        </div>
+      </div>
+    </div>
   );
 };
 
