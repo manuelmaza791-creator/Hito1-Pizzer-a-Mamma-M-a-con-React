@@ -2,6 +2,7 @@ import Card from "react-bootstrap/Card";
 import BotonCard from "../botonCard/BotonCard";
 
 const CardPizza = ({
+  id,
   img,
   nombre,
   descripcion,
@@ -16,11 +17,15 @@ const CardPizza = ({
     <div className="card shadow-sm h-100">
       {/* 2. Reemplazamos la URL estática por la variable img */}
       <img
-        // variant="top"
         src={img}
         className="card-img-top"
         alt={`Pizza ${nombre}`}
         style={{ height: "280px", objectFit: "cover" }}
+        // 5. Agregamos un manejador de errores si la url de la api falla, para mostrar una imagen de respaldo en la carpeta local
+        onError={(e) => {
+          e.currentTarget.onerror = null; // Apagamos el error para evitar un bucle infinito si la imagen de respaldo también falla
+          e.currentTarget.src = `/public/img/${id}.jpg`; // Ruta de la imagen de respaldo local
+        }}
       />
 
       <div className="card-body d-flex flex-column flex-grow-1">
