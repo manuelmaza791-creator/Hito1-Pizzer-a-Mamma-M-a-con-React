@@ -63,6 +63,10 @@ const Cart = () => {
                   borderRadius: "5px",
                   marginRight: "15px",
                 }}
+                onError={(e) => {
+                  e.currentTarget.onError = null;
+                  e.currentTarget.src = `/public/img/${pizza.id}.jpg`;
+                }}
               />
               <h6 className="mb-0 fw-bold text-capitalize">{pizza.name}</h6>
             </div>
