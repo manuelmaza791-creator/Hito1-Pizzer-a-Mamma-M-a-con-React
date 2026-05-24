@@ -1,5 +1,8 @@
 import Card from "react-bootstrap/Card";
 import BotonCard from "../botonCard/BotonCard";
+// Importamos los hooks del context para poder usar la funcion addToCart y agregar las pizzas al carrito desde este componente
+import { useContext } from "react";
+import { CartContext } from "../../context/CartContext";
 
 const CardPizza = ({
   id,
@@ -13,6 +16,9 @@ const CardPizza = ({
   colorButton2,
   textButton2,
 }) => {
+  // Extraemos la funcion addToCart de nuestro almacen ubicado en CartContext para agregar las pizzas al carrito desde este componente CardPizza, que es el encargado de mostrar cada pizza individualmente.
+  const { addToCart } = useContext(CartContext);
+
   return (
     <div className="card shadow-sm h-100">
       {/* 2. Reemplazamos la URL estática por la variable img */}
@@ -56,7 +62,15 @@ const CardPizza = ({
         <hr />
         <div className="d-flex justify-content-between mt-auto px-5 mb-1">
           <BotonCard colorButton="outline-dark" textButton="ver más 👀" />
-          <BotonCard colorButton="dark" textButton="Añadir 🛒" />
+          //
+          <button
+            className="btn btn-dark"
+            onClick={() =>
+              addToCart({ id, name: nombre, price: precio, img, count: 1 })
+            }
+          >
+            Añadir 🛒
+          </button>
         </div>
       </div>
     </div>

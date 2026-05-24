@@ -1,9 +1,15 @@
 import React from "react";
 import Boton from "./../boton/Boton";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { CartContext } from "../../context/CartContext";
 
 const Navegacion = ({ token }) => {
-  const Total = 25000;
+  // Extraemos el carrito y el total que ya viene calculado de nuestro almacen global en el componente CartContext; usando el hook useContext, para poder mostrar el total del carrito en el navbar, que es el encargado de mostrar la barra de navegación en toda la app.
+  const { cart, total } = useContext(CartContext);
+
+  // Caluclamos el total usando reduce(). Multiplicamos el precio de cada pizza por su cantidad (count) y sumamos al acumulador.
+  // const Total = cart.reduce((acumulador, pizza) => acumulador + pizza.price * pizza.count,0,);  ---> Ahora el total se calcula una sola vez de forma global en el CartContext, para no tener que calcularlo en cada componente que lo necesite (como el navbar y el carrito), y se almacena en la variable total, que es la que se muestra en el navbar.
 
   return (
     <nav className="navbar navbar-dark bg-dark px-4 d-flex justify-content-between">
@@ -45,7 +51,7 @@ const Navegacion = ({ token }) => {
 
         {/* El carrito siempre se muestra, pero el total es dinámico */}
         <Link to="/cart" className="btn btn-info text-white border-info">
-          🛒 Total: ${Total.toLocaleString()}
+          🛒 Total: ${total.toLocaleString()}
         </Link>
       </div>
     </nav>

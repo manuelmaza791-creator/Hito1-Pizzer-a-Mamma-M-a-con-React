@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { pizzaCart } from "../pizzas";
 import Button from "react-bootstrap/Button";
+import { useContext } from "react";
+import { CartContext } from "../context/CartContext";
 
 const Cart = () => {
-  // 1. funcion para agregar al carrito usando el arreglo pizzaCart
-  const [cart, setCart] = useState(pizzaCart);
+  // 1. cambiamos la funcion para agregar al carrito usando el arreglo pizzaCart: (  const [cart, setCart] = useState(pizzaCart)  ); se cambiaria por nuestro almacen global creado en CartContext y se agrega el total ya calculado en el CartContext.
+  const { cart, increaseQuantity, decreaseQuantity, total } =
+    useContext(CartContext); // Extraemos el carrito y las funciones de nuestro almacen global usando el hook useContext, para poder mostrar el carrito y modificarlo desde este componente Cart, que es el encargado de mostrar el detalle del pedido.
 
-  // 2. funcion para calcular el total del carrito
-  const total = cart.reduce(
-    (acumulador, pizza) => acumulador + pizza.price * pizza.count,
-    0,
-  );
+  // 2. funcion para calcular el total del carrito (igual que en el navbar) usando el metodo reduce, multiplicando el precio de cada pizza por su cantidad (count) y sumando al acumulador.
+  // const total = cart.reduce((acumulador, pizza) => acumulador + pizza.price * pizza.count,0,);  ---> Ahora el total se calcula una sola vez de forma global en el CartContext.
 
   // 6. Funcion para aumentar la cantidad, buscando la pizza por su id
   const aumentarCantidad = (id) => {
@@ -74,37 +74,37 @@ const Cart = () => {
             cantidad, usando la varible pizza.count */}
             <div className="d-flex align-items-center">
               <h6 className="mb-0 fw-bold me-4">
-                ${pizza.price * pizza.count}
+                ${(pizza.price * pizza.count).toLocaleString()}
               </h6>
               {/* 16. Aca agregamos los botones de cantidad, usando las funciones
               aumentarCantidad y disminuirCantidad, pasando el id de la pizza
               por parametro. */}
-              <Button
+              <button
                 variant="outline-primary"
                 size="sm"
-                onClick={() => aumentarCantidad(pizza.id)}
-              >
-                +
-              </Button>
-              <strong className="mx-3">{pizza.count}</strong>
-              <Button
-                variant="outline-danger"
-                size="sm"
-                onClick={() => disminuirCantidad(pizza.id)}
+                onClick={() => decreaseQuantity(pizza.id)}
               >
                 -
-              </Button>
+              </button>
+              <span className="mx-3">{pizza.count}</span>
+              <button
+                variant="outline-danger"
+                size="sm"
+                onClick={() => increaseQuantity(pizza.id)}
+              >
+                +
+              </button>
             </div>
           </div>
         ))}
       </div>
       {/* 4. Aca mostramos el total del carrito usando la variable total */}
-      <h3 className="mb-4">Total: ${total}</h3>
+      <h3 className="mb-4">Total: ${total.toLocaleString()}</h3>
       {/* 5. Aca agregamos un boton para finalizar la compra, que por ahora solo
       muestra un mensaje de alerta al hacer click. */}
-      <Button className="mb-4" variant="dark">
+      <button className="mb-4" variant="dark">
         Pagar 💳
-      </Button>
+      </button>
     </div>
   );
 };
