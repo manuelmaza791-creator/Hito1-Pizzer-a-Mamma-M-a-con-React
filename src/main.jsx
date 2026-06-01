@@ -12,15 +12,20 @@ import { CartProvider } from "./context/CartContext.jsx";
 // Importamos el PizzaProvider para envolver toda la app y que las pizzas estén disponibles en cualquier componente
 import { PizzaProvider } from "./context/PizzaContext.jsx";
 
+import { UserProvider } from "./context/UserContext.jsx";
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
-      {/*Envolvemos la app con el CartProvider y pizzaProvider. Esto hace que el carrito esté disponible en toda la aplicación.*/}
-      <PizzaProvider>
-        <CartProvider>
-          <App />
-        </CartProvider>
-      </PizzaProvider>
+      {/*Anidamos el UserProvider */}
+      <UserProvider>
+        {/*Envolvemos la app con el CartProvider y pizzaProvider. Esto hace que el carrito esté disponible en toda la aplicación.*/}
+        <PizzaProvider>
+          <CartProvider>
+            <App />
+          </CartProvider>
+        </PizzaProvider>
+      </UserProvider>
     </BrowserRouter>
   </React.StrictMode>,
 );

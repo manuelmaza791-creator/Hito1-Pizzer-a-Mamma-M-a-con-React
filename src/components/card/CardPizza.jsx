@@ -3,6 +3,8 @@ import BotonCard from "../botonCard/BotonCard";
 // Importamos los hooks del context para poder usar la funcion addToCart y agregar las pizzas al carrito desde este componente
 import { useContext } from "react";
 import { CartContext } from "../../context/CartContext";
+// Importamos el link de react-router-dom para poder redirigir a la pagina de detalles de cada pizza al hacer click en el boton "ver más"
+import { Link } from "react-router-dom";
 
 const CardPizza = ({
   id,
@@ -61,8 +63,11 @@ const CardPizza = ({
 
         <hr />
         <div className="d-flex justify-content-between mt-auto px-5 mb-1">
-          <BotonCard colorButton="outline-dark" textButton="ver más 👀" />
-          //
+          {/* Cambiamos el boton por un Link que apunte al ID dinámico de cada pizza. */}
+          <Link to={`/pizza/${id}`} className="btn btn-outline-dark">
+            Ver Más 👀
+          </Link>
+
           <button
             className="btn btn-dark"
             onClick={() =>

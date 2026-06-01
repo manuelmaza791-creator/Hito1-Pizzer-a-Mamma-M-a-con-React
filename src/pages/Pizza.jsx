@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
-
 import { useContext } from "react";
+
+// importamos useParams para extraer el id de la pizza de los parametros de la url.
 import { useParams } from "react-router-dom";
 import { PizzaContext } from "../context/PizzaContext";
 
 const Pizza = () => {
+  const [pizza, setPizza] = useState(null);
+
   // 3 pizza guardará los valores traídos desde la API
   // const [pizza, setPizza] = useState({});    al usar el context de las pizzas ya no necesitamos este estado local, porque ahora la pizza actual se obtiene del almacen global del context, y no de un estado local en este componente. Esto hace que el codigo sea mas limpio y organizado, y evita la duplicación de estados innecesarios.|
 
@@ -21,18 +24,34 @@ const Pizza = () => {
   //  setPizza(dataPizza); // con setPizza se actualiza el estado
   // };  // tampoco necesitamos esta función consultarApi porque la logica del fetch ya esta centralizada en el context de las pizzas, y se llama automaticamente al montar el provider, por lo que los datos de las pizzas ya estan disponibles en el almacen global del context cuando se renderiza este componente.|
 
+  // Extraemos las pizzas del almacen global del context de las pizzas usando el hook useContext, para poder buscar la pizza correspondiente al id que obtuvimos de los parametros de la url.
+  // const { pizzas } = useContext(PizzaContext);
+
   // Extraemos el id de la pizza de los parametros de la url usando el hook useParams de react-router-dom, para poder mostrar la pizza correspondiente a ese id.
   const { id } = useParams();
 
-  // Extraemos las pizzas del almacen global del context de las pizzas usando el hook useContext, para poder buscar la pizza correspondiente al id que obtuvimos de los parametros de la url.
-  const { pizzas } = useContext(PizzaContext);
+  // Hacemos el fetch usando el ID especifico
+  const getPizza = async () => {
+    try {
+      // Concatenamos el ID a la url de la API, para obtener los datos de la pizza correspondiente a ese ID.
+      const response = await fetch(`http://localhost:5000/api/pizzas/${id}`);
+      const data = await response.json();
+      setPizza(data);
+    } catch (error) {
+      console.error("Error al obtener la pizza:", error);
+    }
+  };
+
+  useEffect(() => {
+    getPizza();
+  }, [id]); // Colocamos el ID como dependencia del useEffect, para que cada vez que el ID cambie (cuando el usuario navegue a una pizza diferente), se vuelva a ejecutar la función getPizza y se actualice la pizza mostrada en pantalla.
 
   // Buscamos la pizza que coincida con el ID dentro del alamcen global del context de las pizzas, usando el metodo find, y guardamos esa pizza en la variable pizzaSeleccionada.
-  const pizzaSeleccionada = pizzas.find((p) => p.id === id);
+  // const pizzaSeleccionada = pizzas.find((p) => p.id === id);
 
   // Si no se encuentra la pizza, mostramos un mensaje de carga o error.
-  console.log("Datos de la pizza actual:", pizzaSeleccionada);
-  if (!pizzaSeleccionada) {
+
+  if (!pizza) {
     return (
       <div>
         <h2>Cargando la pizza... 🍕⏳ </h2>

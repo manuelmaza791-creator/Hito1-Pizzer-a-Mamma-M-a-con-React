@@ -3,11 +3,14 @@ import { pizzaCart } from "../pizzas";
 import Button from "react-bootstrap/Button";
 import { useContext } from "react";
 import { CartContext } from "../context/CartContext";
+import { UserContext } from "../context/UserContext";
 
 const Cart = () => {
   // 1. cambiamos la funcion para agregar al carrito usando el arreglo pizzaCart: (  const [cart, setCart] = useState(pizzaCart)  ); se cambiaria por nuestro almacen global creado en CartContext y se agrega el total ya calculado en el CartContext.
   const { cart, increaseQuantity, decreaseQuantity, total } =
     useContext(CartContext); // Extraemos el carrito y las funciones de nuestro almacen global usando el hook useContext, para poder mostrar el carrito y modificarlo desde este componente Cart, que es el encargado de mostrar el detalle del pedido.
+
+  const { token } = useContext(UserContext); // Extraemos el token de nuestro almacen global usando el hook useContext, para poder mostrar el carrito solo si el usuario está logueado, y si no lo está, mostrar un mensaje indicando que debe iniciar sesión para ver el carrito.
 
   // 2. funcion para calcular el total del carrito (igual que en el navbar) usando el metodo reduce, multiplicando el precio de cada pizza por su cantidad (count) y sumando al acumulador.
   // const total = cart.reduce((acumulador, pizza) => acumulador + pizza.price * pizza.count,0,);  ---> Ahora el total se calcula una sola vez de forma global en el CartContext.
@@ -102,7 +105,7 @@ const Cart = () => {
       <h3 className="mb-4">Total: ${total.toLocaleString()}</h3>
       {/* 5. Aca agregamos un boton para finalizar la compra, que por ahora solo
       muestra un mensaje de alerta al hacer click. */}
-      <button className="mb-4" variant="dark">
+      <button className="mb-4" variant="dark" disabled={!token}>
         Pagar 💳
       </button>
     </div>
