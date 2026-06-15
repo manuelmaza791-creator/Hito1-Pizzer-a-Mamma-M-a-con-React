@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { pizzaCart } from "../pizzas";
-import Button from "react-bootstrap/Button";
+// import { pizzaCart } from "../pizzas";
+// import Button from "react-bootstrap/Button";
 import { useContext } from "react";
 import { CartContext } from "../context/CartContext";
 import { UserContext } from "../context/UserContext";
@@ -12,34 +12,64 @@ const Cart = () => {
 
   const { token } = useContext(UserContext); // Extraemos el token de nuestro almacen global usando el hook useContext, para poder mostrar el carrito solo si el usuario está logueado, y si no lo está, mostrar un mensaje indicando que debe iniciar sesión para ver el carrito.
 
+  const [compraExitosa, setCompraExitosa] = useState(false);
+
+  const handleCheckout = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/checkouts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          //  👇 AQUI colocamos el token para demostrar que estamos logueados
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          cart: cart, // enviamos el arreglo del carrito al backend
+        }),
+      });
+
+      // validamos si la compra fue exitosa
+      if (response.ok) {
+        // colocamos o encendemos un mensaje visual , en vez de alert, los cuales se creo un nuevo estado
+        setCompraExitosa(true);
+      } else {
+        alert("Error al procesar la compra, Revisa tu sesion.");
+      }
+    } catch (error) {
+      console.error("Error en el servidorr:", error);
+    }
+  };
+
   // 2. funcion para calcular el total del carrito (igual que en el navbar) usando el metodo reduce, multiplicando el precio de cada pizza por su cantidad (count) y sumando al acumulador.
   // const total = cart.reduce((acumulador, pizza) => acumulador + pizza.price * pizza.count,0,);  ---> Ahora el total se calcula una sola vez de forma global en el CartContext.
 
-  // 6. Funcion para aumentar la cantidad, buscando la pizza por su id
-  const aumentarCantidad = (id) => {
-    // 7. Aca usamos el metodo map para crear un nuevo arreglo de pizzas, donde si la pizza tiene el mismo id que el que se paso por parametro, se aumenta su cantidad en 1, sino se deja igual.
-    const nuevoCart = cart.map((pizza) =>
-      pizza.id === id ? { ...pizza, count: pizza.count + 1 } : pizza,
-    );
+  // <----- La funcion para aumentar disminuir cantidad ya no van en este componente porque se ha creado un contexto en el componente CartContext, donde se llamara al carrito de pizzas,  de esta manera tener un codigo mas limpio y se pueda reutlizar en otros componentes. ---->
 
-    // 8. Aca se actualiza el estado del carrito con el nuevo arreglo de pizzas usando la funcion setCart.
-    setCart(nuevoCart);
-  };
+  // 6. Funcion para aumentar la cantidad, buscando la pizza por su id
+  // const aumentarCantidad = (id) => {
+  // 7. Aca usamos el metodo map para crear un nuevo arreglo de pizzas, donde si la pizza tiene el mismo id que el que se paso por parametro, se aumenta su cantidad en 1, sino se deja igual.
+  //  const nuevoCart = cart.map((pizza) =>
+  //    pizza.id === id ? { ...pizza, count: pizza.count + 1 } : pizza,
+  //  );
+
+  // 8. Aca se actualiza el estado del carrito con el nuevo arreglo de pizzas usando la funcion setCart.
+  //  setCart(nuevoCart);
+  // };
 
   // 9. Funcion para disminuir la cantidad, buncando la pizza por su id
-  const disminuirCantidad = (id) => {
-    // 10. Aca usamos el metodo map para crear un nuevo arreglo de pizzas ({ ...pizza, -----} ), donde si la pizza tiene el mismo id que el que se paso por parametro, se disminuye su cantidad en 1, sino se deja igual.
-    const nuevoCart = cart.map((pizza) =>
-      pizza.id === id ? { ...pizza, count: pizza.count - 1 } : pizza,
-    );
+  //mconst disminuirCantidad = (id) => {
+  // 10. Aca usamos el metodo map para crear un nuevo arreglo de pizzas ({ ...pizza, -----} ), donde si la pizza tiene el mismo id que el que se paso por parametro, se disminuye su cantidad en 1, sino se deja igual.
+  //  const nuevoCart = cart.map((pizza) =>
+  //    pizza.id === id ? { ...pizza, count: pizza.count - 1 } : pizza,
+  //  );
 
-    // 11. Aca se actualiza el estado del carrito con el nuevo arreglo de pizzas que sera almacenado en la variable nuevoCart usando la funcion setCart.
-    setCart(nuevoCart);
+  //  // 11. Aca se actualiza el estado del carrito con el nuevo arreglo de pizzas que sera almacenado en la variable nuevoCart usando la funcion setCart.
+  //  setCart(nuevoCart);
 
-    // 12. Usando el metodo filter: Si al restar el count llega a 0, se elimina la pizza del carrito, dejando solo las pizzas con count mayor a 0.
-    const cartFiltrado = nuevoCart.filter((pizza) => pizza.count > 0);
-    setCart(cartFiltrado);
-  };
+  // 12. Usando el metodo filter: Si al restar el count llega a 0, se elimina la pizza del carrito, dejando solo las pizzas con count mayor a 0.
+  //  const cartFiltrado = nuevoCart.filter((pizza) => pizza.count > 0);
+  //  setCart(cartFiltrado);
+  // };
 
   return (
     <div className="container mt-5" style={{ maxWidth: "700px" }}>
@@ -83,16 +113,14 @@ const Cart = () => {
               aumentarCantidad y disminuirCantidad, pasando el id de la pizza
               por parametro. */}
               <button
-                variant="outline-primary"
-                size="sm"
+                className="btn btn-outline-primary btn-sm"
                 onClick={() => decreaseQuantity(pizza.id)}
               >
                 -
               </button>
               <span className="mx-3">{pizza.count}</span>
               <button
-                variant="outline-danger"
-                size="sm"
+                className="btn btn-outline-danger btn-sm"
                 onClick={() => increaseQuantity(pizza.id)}
               >
                 +
@@ -105,9 +133,18 @@ const Cart = () => {
       <h3 className="mb-4">Total: ${total.toLocaleString()}</h3>
       {/* 5. Aca agregamos un boton para finalizar la compra, que por ahora solo
       muestra un mensaje de alerta al hacer click. */}
-      <button className="mb-4" variant="dark" disabled={!token}>
+      <button
+        className="btn btn-success px-5 mb-4"
+        onClick={handleCheckout}
+        disabled={!token}
+      >
         Pagar 💳
       </button>
+      {compraExitosa && (
+        <div className="alert alert-success mt-3 text-center" role="alert">
+          ¡Compra realizada con éxito! Tus pizzas estan en camino. 🍕
+        </div>
+      )}
     </div>
   );
 };
